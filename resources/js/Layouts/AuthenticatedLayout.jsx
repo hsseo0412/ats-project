@@ -76,7 +76,6 @@ export default function AuthenticatedLayout({ header, children }) {
 
     const Sidebar = () => (
         <aside className="flex h-full w-64 flex-col bg-slate-900">
-            {/* Logo */}
             <div className="flex h-16 shrink-0 items-center gap-3 border-b border-slate-800 px-6">
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-500">
                     <svg className="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -86,12 +85,10 @@ export default function AuthenticatedLayout({ header, children }) {
                 <span className="text-base font-bold text-white">ATS Platform</span>
             </div>
 
-            {/* Nav */}
             <nav className="flex-1 space-y-1 px-3 py-5">
                 {navItems.map((item) => <NavItem key={item.href} item={item} />)}
             </nav>
 
-            {/* User */}
             <div className="border-t border-slate-800 p-4">
                 <div className="mb-3 px-1">
                     <p className="text-sm font-medium text-white truncate">{user.name}</p>
@@ -138,41 +135,43 @@ export default function AuthenticatedLayout({ header, children }) {
                 </div>
             )}
 
-            {/* Main content */}
+            {/* Main */}
             <div className="flex flex-1 flex-col overflow-hidden">
                 {/* Top bar */}
-                <div className="flex h-16 shrink-0 items-center justify-between border-b border-slate-200 bg-white px-6 lg:px-8">
-                    <div className="flex items-center gap-4">
-                        <button
-                            className="lg:hidden text-slate-500 hover:text-slate-700"
-                            onClick={() => setSidebarOpen(true)}
-                        >
-                            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                            </svg>
-                        </button>
-                        {header && <div className="text-base font-semibold text-slate-800">{header}</div>}
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${isAdmin ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-600'}`}>
-                            {isAdmin ? '관리자' : '면접관'}
-                        </span>
-                    </div>
+                <div className="flex h-14 shrink-0 items-center justify-between border-b border-slate-200 bg-white px-6 lg:px-8">
+                    <button
+                        className="lg:hidden text-slate-500 hover:text-slate-700"
+                        onClick={() => setSidebarOpen(true)}
+                    >
+                        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                    <span className={`ml-auto rounded-full px-2.5 py-0.5 text-xs font-medium ${isAdmin ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-600'}`}>
+                        {isAdmin ? '관리자' : '면접관'}
+                    </span>
                 </div>
 
-                {/* Flash messages */}
+                {/* Page header */}
+                {header && (
+                    <div className="shrink-0 border-b border-slate-100 bg-white px-6 py-4 lg:px-8">
+                        {header}
+                    </div>
+                )}
+
+                {/* Flash */}
                 {(flash?.success || flash?.error) && (
-                    <div className="px-6 pt-4 lg:px-8">
+                    <div className="shrink-0 px-6 pt-4 lg:px-8">
                         {flash?.success && (
-                            <div className="flex items-center gap-2 rounded-lg bg-green-50 px-4 py-3 text-sm text-green-800">
-                                <svg className="h-4 w-4 shrink-0 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                            <div className="flex items-center gap-2 rounded-lg bg-emerald-50 px-4 py-3 text-sm text-emerald-800 ring-1 ring-emerald-200">
+                                <svg className="h-4 w-4 shrink-0 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
                                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                                 </svg>
                                 {flash.success}
                             </div>
                         )}
                         {flash?.error && (
-                            <div className="flex items-center gap-2 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-800">
+                            <div className="flex items-center gap-2 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-800 ring-1 ring-red-200">
                                 <svg className="h-4 w-4 shrink-0 text-red-500" fill="currentColor" viewBox="0 0 20 20">
                                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
                                 </svg>

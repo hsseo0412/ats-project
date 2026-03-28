@@ -1,19 +1,29 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 
-function ScoreBadge({ score }) {
-    if (score === null || score === undefined) return <span className="text-xs text-gray-400">분석 중</span>;
-    const color = score >= 80 ? 'bg-green-100 text-green-800' : score >= 60 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800';
-    return <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${color}`}>{score}점</span>;
-}
-
-const STAGE_COLORS = {
-    '서류': 'bg-blue-100 text-blue-700',
-    '1차면접': 'bg-yellow-100 text-yellow-700',
-    '2차면접': 'bg-orange-100 text-orange-700',
-    '최종합격': 'bg-green-100 text-green-700',
-    '불합격': 'bg-red-100 text-red-700',
+const STAGE_STYLES = {
+    '서류':   'bg-blue-50 text-blue-700 ring-blue-200',
+    '1차면접': 'bg-amber-50 text-amber-700 ring-amber-200',
+    '2차면접': 'bg-orange-50 text-orange-700 ring-orange-200',
+    '최종합격': 'bg-emerald-50 text-emerald-700 ring-emerald-200',
+    '불합격':  'bg-red-50 text-red-700 ring-red-200',
 };
+
+function ScoreBadge({ score }) {
+    if (score === null || score === undefined) {
+        return <span className="text-xs text-slate-400">분석 중</span>;
+    }
+    const style = score >= 80
+        ? 'bg-emerald-50 text-emerald-700 ring-emerald-200'
+        : score >= 60
+        ? 'bg-amber-50 text-amber-700 ring-amber-200'
+        : 'bg-red-50 text-red-700 ring-red-200';
+    return (
+        <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ring-1 ${style}`}>
+            {score}점
+        </span>
+    );
+}
 
 export default function Index({ applicants }) {
     const { auth } = usePage().props;
@@ -28,74 +38,79 @@ export default function Index({ applicants }) {
     return (
         <AuthenticatedLayout header={
             <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold leading-tight text-gray-800">지원자 관리</h2>
+                <h1 className="text-base font-semibold text-slate-900">지원자 관리</h1>
                 {isAdmin && (
-                    <Link href={route('applicants.create')} className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">
-                        + 지원자 등록
+                    <Link href={route('applicants.create')} className="inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3.5 py-2 text-sm font-medium text-white hover:bg-indigo-700 transition-colors">
+                        <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+                        지원자 등록
                     </Link>
                 )}
             </div>
         }>
             <Head title="지원자 관리" />
 
-            <div className="py-8">
-                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <div className="overflow-hidden rounded-lg bg-white shadow-sm">
-                        <table className="min-w-full divide-y divide-gray-200">
-                            <thead className="bg-gray-50">
-                                <tr>
-                                    {['이름', '채용공고', '연락처', 'AI 점수', '현재 단계', '지원일', ''].map((h) => (
-                                        <th key={h} className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">{h}</th>
-                                    ))}
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-gray-100 bg-white">
-                                {applicants.data.map((applicant) => (
-                                    <tr key={applicant.id} className="hover:bg-gray-50">
-                                        <td className="px-6 py-4">
-                                            <Link href={route('applicants.show', applicant.id)} className="font-medium text-gray-900 hover:text-indigo-600">
-                                                {applicant.name}
-                                            </Link>
-                                            <div className="text-xs text-gray-400">{applicant.email}</div>
-                                        </td>
-                                        <td className="px-6 py-4 text-sm text-gray-500">
-                                            {applicant.job_posting?.title ?? '-'}
-                                        </td>
-                                        <td className="px-6 py-4 text-sm text-gray-500">{applicant.phone ?? '-'}</td>
-                                        <td className="px-6 py-4"><ScoreBadge score={applicant.ai_score} /></td>
-                                        <td className="px-6 py-4">
-                                            {applicant.latest_stage && (
-                                                <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${STAGE_COLORS[applicant.latest_stage.stage] ?? 'bg-gray-100 text-gray-600'}`}>
-                                                    {applicant.latest_stage.stage}
-                                                </span>
-                                            )}
-                                        </td>
-                                        <td className="px-6 py-4 text-sm text-gray-500">{new Date(applicant.created_at).toLocaleDateString('ko-KR')}</td>
-                                        <td className="px-6 py-4 text-right text-sm">
-                                            <Link href={route('applicants.show', applicant.id)} className="mr-3 text-indigo-600 hover:text-indigo-800">상세</Link>
+            <div className="p-6 lg:p-8">
+                <div className="rounded-xl bg-white ring-1 ring-slate-200 overflow-hidden">
+                    <table className="min-w-full">
+                        <thead>
+                            <tr className="border-b border-slate-100">
+                                {['이름', '채용공고', '연락처', 'AI 점수', '현재 단계', '지원일', ''].map((h) => (
+                                    <th key={h} className="px-5 py-3.5 text-left text-xs font-semibold text-slate-500">{h}</th>
+                                ))}
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-50">
+                            {applicants.data.map((applicant) => (
+                                <tr key={applicant.id} className="hover:bg-slate-50 transition-colors">
+                                    <td className="px-5 py-4">
+                                        <Link href={route('applicants.show', applicant.id)} className="text-sm font-medium text-slate-900 hover:text-indigo-600 transition-colors">
+                                            {applicant.name}
+                                        </Link>
+                                        <div className="text-xs text-slate-400 mt-0.5">{applicant.email}</div>
+                                    </td>
+                                    <td className="px-5 py-4 text-sm text-slate-500">{applicant.job_posting?.title ?? '-'}</td>
+                                    <td className="px-5 py-4 text-sm text-slate-500">{applicant.phone ?? '-'}</td>
+                                    <td className="px-5 py-4"><ScoreBadge score={applicant.ai_score} /></td>
+                                    <td className="px-5 py-4">
+                                        {applicant.latest_stage && (
+                                            <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ring-1 ${STAGE_STYLES[applicant.latest_stage.stage] ?? 'bg-slate-100 text-slate-600 ring-slate-200'}`}>
+                                                {applicant.latest_stage.stage}
+                                            </span>
+                                        )}
+                                    </td>
+                                    <td className="px-5 py-4 text-sm text-slate-500">
+                                        {new Date(applicant.created_at).toLocaleDateString('ko-KR')}
+                                    </td>
+                                    <td className="px-5 py-4 text-right">
+                                        <div className="flex items-center justify-end gap-3">
+                                            <Link href={route('applicants.show', applicant.id)} className="text-sm text-indigo-600 hover:text-indigo-800 transition-colors">상세</Link>
                                             {isAdmin && (
                                                 <>
-                                                    <Link href={route('applicants.edit', applicant.id)} className="mr-3 text-gray-600 hover:text-gray-800">수정</Link>
-                                                    <button onClick={() => destroy(applicant.id)} className="text-red-600 hover:text-red-800">삭제</button>
+                                                    <Link href={route('applicants.edit', applicant.id)} className="text-sm text-slate-500 hover:text-slate-800 transition-colors">수정</Link>
+                                                    <button onClick={() => destroy(applicant.id)} className="text-sm text-red-500 hover:text-red-700 transition-colors">삭제</button>
                                                 </>
                                             )}
-                                        </td>
-                                    </tr>
-                                ))}
-                                {applicants.data.length === 0 && (
-                                    <tr><td colSpan={7} className="px-6 py-12 text-center text-sm text-gray-400">등록된 지원자가 없습니다.</td></tr>
-                                )}
-                            </tbody>
-                        </table>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                            {applicants.data.length === 0 && (
+                                <tr>
+                                    <td colSpan={7} className="px-5 py-16 text-center text-sm text-slate-400">
+                                        등록된 지원자가 없습니다.
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
 
-                        {applicants.links && (
-                            <div className="flex justify-center gap-1 border-t border-gray-200 px-6 py-4">
-                                {applicants.links.map((link, i) => (
-                                    <Link key={i} href={link.url ?? '#'} className={`rounded px-3 py-1 text-sm ${link.active ? 'bg-indigo-600 text-white' : 'text-gray-600 hover:bg-gray-100'} ${!link.url ? 'cursor-default opacity-40' : ''}`} dangerouslySetInnerHTML={{ __html: link.label }} />
-                                ))}
-                            </div>
-                        )}
-                    </div>
+                    {applicants.links && applicants.links.length > 3 && (
+                        <div className="flex justify-center gap-1 border-t border-slate-100 px-5 py-4">
+                            {applicants.links.map((link, i) => (
+                                <Link key={i} href={link.url ?? '#'} className={`rounded-lg px-3 py-1.5 text-sm transition-colors ${link.active ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:bg-slate-100'} ${!link.url ? 'cursor-default opacity-40' : ''}`} dangerouslySetInnerHTML={{ __html: link.label }} />
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
         </AuthenticatedLayout>
