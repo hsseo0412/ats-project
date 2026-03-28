@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -27,4 +28,19 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password'          => 'hashed',
     ];
+
+    public function jobPostings(): HasMany
+    {
+        return $this->hasMany(JobPosting::class);
+    }
+
+    public function interviews(): HasMany
+    {
+        return $this->hasMany(Interview::class, 'interviewer_id');
+    }
+
+    public function stageChanges(): HasMany
+    {
+        return $this->hasMany(ApplicationStage::class, 'changed_by');
+    }
 }
